@@ -4,7 +4,7 @@
 namespace Kl;
 
 
-class UserDbTable
+class UserDbTable  extends TableModel
 {
     private $storage = [
         [
@@ -26,19 +26,20 @@ class UserDbTable
 
     public function updateUser($data)
     {
-        foreach ($this->storage as $index => $item) {
-            if ($item['id'] == $data['id']) {
-                unset($data['id']);
+        try {
+            $ids = array_column($this->storage, 'id');
+                if (in_array($data['id'], $ids)) {
+                    unset($data['id']);
 
-                $this->storage[$index] = $data;
-                return true;
-            }
+                    $this->storage[$data['id']] = $data;
+                    return true;
+                }
+        } catch (\ErrorException $e) {
+            $msg = sprintf('User %s not found', $data['id']);
+
+            error_log($msg);
+
+            throw new \Exception($msg);
         }
-
-        $msg = sprintf('User %s not found', $data['id']);
-
-        error_log($msg);
-
-        throw new \Exception($msg);
     }
 }

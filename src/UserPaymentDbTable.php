@@ -4,12 +4,13 @@
 namespace Kl;
 
 
-class UserPaymentDbTable
+class UserPaymentDbTable extends TableModel
 {
     private $storage = [];
 
-    public function add($paymentData)
+    public function add(UserPayment $payment)
     {
+        $paymentData = $payment->toArray();
         if (empty($paymentData['id'])) {
             $paymentData['id'] = count($this->storage) + 1;
         }
